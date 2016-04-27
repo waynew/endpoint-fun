@@ -20,4 +20,4 @@ In the root directory, simply run:
 
 In the root directory:
 
-   $ javac -d java java/com/example/EndpointFun.java && java -cp java EndpointFun
+   $ javac -d java java/com/example/EndpointFun.java && java -cp java com.example.EndpointFun

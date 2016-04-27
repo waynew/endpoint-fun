@@ -59,23 +59,22 @@ table, th, td {
 
         function add_thing(thing){
             $.post("/", JSON.stringify(thing), function(data){
-                var result = JSON.parse(data);
                 var el = $('<div>', {'class': 'result'})
                     .append("Name:")
                     .append($('<input>', {'readonly': 'readonly',
-                                          'value': result.name,
+                                          'value': data.name,
                                           }))
                     .append("Fnord:")
                     .append($('<input>', {'readonly': 'readonly',
-                                          'value': result.fnord,
+                                          'value': data.fnord,
                                           }))
                     .append("Favorite Color:")
                     .append($('<input>', {'readonly': 'readonly',
-                                          'value': result.favorite_color,
+                                          'value': data.favorite_color,
                                           }))
                 ;
                 var table = $('<table>');
-                $.each(result.random_table, function(i, row){
+                $.each(data.random_table, function(i, row){
                     var row_el = $('<tr>');
                     $.each(row, function(j, item){
                         row_el.append($(i == 0 ? '<th>' : '<td>', {'text': item}));
@@ -102,7 +101,8 @@ table, th, td {
                     $('form').css({'color': 'black'});
                     setTimeout(check_status, 5000);
                 }, 'json')
-                .error(function(){
+                .error(function(data){
+                    console.log(data);
                     $('#status').text('Offline!').css({'color': 'red', 'opacity': 1});
                     $('form :input').prop('disabled', true);
                     $('form').css({'color': 'gray'});
