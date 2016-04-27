@@ -39,7 +39,9 @@ class Handler(BaseHTTPRequestHandler):
             content_length = int(self.headers['Content-Length'])
             content = self.rfile.read(content_length).decode()
             data = json.loads(content)
+            self.send_response(200)
         except ValueError:
+            self.send_response(400)
             data = {"status_code": 400, "message": "Your JSON was broken"}
             print(content)
         else:
