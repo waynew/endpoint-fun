@@ -32,7 +32,7 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            self.wfile.write('{"Helloooooo!": "Nurse!"}'.encode())
+            self.wfile.write('{"server_type": "Python"}'.encode())
 
     def do_POST(self):
         try:

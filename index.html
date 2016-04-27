@@ -4,7 +4,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <style>
 div.result {
-    border: thick blue dotted;
+    border: thin #efefef dotted;
     margin-bottom: 1em;
 }
 
@@ -17,11 +17,14 @@ table, th, td {
     border: thin black solid;
     border-collapse: collapse;
 }
+
+#status {
+    color: red;
+}
     </style>
     </head>
     <body>
-        Hello!
-        <div id='world'>Hello World!</div>
+        <div class="status">Status: <span id="status">Offline</span>
         <div>
             <form>
                 <label for="name">Name</label>
@@ -42,6 +45,8 @@ table, th, td {
             </div>
         </fieldset>
         <script>
+        var timer_id = null;
+
         function get_formdata(){
             var data = {
                 "name": $('input[name=name]').val(),
@@ -84,14 +89,35 @@ table, th, td {
             });
         }
 
+        function check_status(){
+            $('#status').text('Checking...').animate({
+                'opacity': 0.5,
+            }).css({'color': 'black'});
+
+            setTimeout(function(){
+                $.get('/', function(data){
+                    $('#status').text('Connected to '+data.server_type)
+                                .css({'color': 'green', 'opacity': 1});
+                    $('form :input').prop('disabled', false);
+                    $('form').css({'color': 'black'});
+                    setTimeout(check_status, 5000);
+                }, 'json')
+                .error(function(){
+                    $('#status').text('Offline!').css({'color': 'red', 'opacity': 1});
+                    $('form :input').prop('disabled', true);
+                    $('form').css({'color': 'gray'});
+                    setTimeout(check_status, 2000);
+                });
+            }, 1000);
+        }
+
         $(function(){
             $('input[name=name]').focus();
-            $('#world').hide();
-            $('#world').fadeIn(1000, function(){});
             $('#post').click(function(){
                 add_thing(get_formdata());
                 return false;
             });
+            timer_id = setTimeout(check_status, 1000);
         });
         </script>
     </body>
