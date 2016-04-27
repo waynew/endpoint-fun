@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <style>
+div.result {
+    border: thick blue dotted;
+    margin-bottom: 1em;
+}
+
+div.table {
+    height: 4.5em;
+    overflow: auto;
+}
+
+table, th, td {
+    border: thin black solid;
+    border-collapse: collapse;
+}
+    </style>
+    </head>
+    <body>
+        Hello!
+        <div id='world'>Hello World!</div>
+        <div>
+            <form>
+                <label for="name">Name</label>
+                <input type="text" name="name"/>
+                <label for="fnord">Fnord</label>
+                <input type="text" name="fnord"/>
+                <select name="favorite_color">
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                    <option value="yellow">Blu&#8230; No, Yelloooowwwww!</option>
+                </select>
+                <button id="post">Add Something</button>
+            </form>
+        </div>
+        <fieldset>
+            <legend>Results:</legend>
+            <div id="result">
+            </div>
+        </fieldset>
+        <script>
+        function get_formdata(){
+            var data = {
+                "name": $('input[name=name]').val(),
+                "fnord": $('input[name=fnord]').val(),
+                "favorite_color": $('select[name=favorite_color]').val(),
+            }
+
+            return data;
+        }
+
+        function add_thing(thing){
+            $.post("/", JSON.stringify(thing), function(data){
+                var result = JSON.parse(data);
+                var el = $('<div>', {'class': 'result'})
+                    .append("Name:")
+                    .append($('<input>', {'readonly': 'readonly',
+                                          'value': result.name,
+                                          }))
+                    .append("Fnord:")
+                    .append($('<input>', {'readonly': 'readonly',
+                                          'value': result.fnord,
+                                          }))
+                    .append("Favorite Color:")
+                    .append($('<input>', {'readonly': 'readonly',
+                                          'value': result.favorite_color,
+                                          }))
+                ;
+                var table = $('<table>');
+                $.each(result.random_table, function(i, row){
+                    var row_el = $('<tr>');
+                    $.each(row, function(j, item){
+                        row_el.append($(i == 0 ? '<th>' : '<td>', {'text': item}));
+                    });
+                    table.append(row_el);
+                });
+                el.append($('<div>', {'class': 'table'}).append(table));
+                el.hide()
+                $('#result').append(el);
+                el.fadeIn(1000);
+            });
+        }
+
+        $(function(){
+            $('input[name=name]').focus();
+            $('#world').hide();
+            $('#world').fadeIn(1000, function(){});
+            $('#post').click(function(){
+                add_thing(get_formdata());
+                return false;
+            });
+        });
+        </script>
+    </body>
+</html>
